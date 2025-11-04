@@ -62,7 +62,7 @@ public class ApplicationService {
 
 	public ApplicationDetailResponseDTO getApplication(Long applicationId) {
 
-		// applicationId로 찾은 Optional 객체 값이 비어있는 경우 예외 발생, 값이 존재하는 경우 application에 값 저장
+		// applicationId로 찾은 Optional 객체 값이 비어있는 경우 예외 발생, 값이 존재하는 경우 변수 application에 값 저장
 		Application application = applicationRepository.findByApplicationId(applicationId)
 		    .orElseThrow(() -> new NoSuchElementException("Application with ID " + applicationId + " does not exist"));
 

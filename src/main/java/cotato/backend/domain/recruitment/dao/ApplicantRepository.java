@@ -10,4 +10,5 @@ import cotato.backend.domain.recruitment.entity.Applicant;
 @Repository
 public interface ApplicantRepository extends JpaRepository<Applicant, Long> {
 	Optional<Applicant> findByPhoneNumber(String phoneNumber);
+	Optional<Applicant> findByApplicantId(Long applicantId);
 }
