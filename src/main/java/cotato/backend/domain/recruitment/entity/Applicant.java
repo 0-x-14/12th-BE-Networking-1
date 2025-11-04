@@ -42,4 +42,9 @@ public class Applicant {
 
 	@OneToMany(mappedBy = "applicant", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Application> applications = new ArrayList<>();
+
+	// 다른 연도에 재지원하는 지원자일 경우 나이를 업데이트해야 하므로
+	public void updateAge(Integer newAge){
+		this.age = newAge;
+	}
 }
