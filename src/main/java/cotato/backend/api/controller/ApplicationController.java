@@ -11,6 +11,7 @@ import cotato.backend.api.dto.response.DefaultIdResponse;
 import cotato.backend.api.dto.response.request.SubmitApplicationDTO;
 import cotato.backend.common.dto.DataResponse;
 import cotato.backend.domain.recruitment.application.ApplicationService;
+import cotato.backend.domain.recruitment.dto.response.ApplicationDetailResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,14 @@ public class ApplicationController {
 			DataResponse.created(
 				DefaultIdResponse.of(applicationService.submitApplication(submitApplicationDTO))
 			)
+		);
+	}
+
+	@Operation(summary = "지원 서류 세부 조회 API")
+	@GetMapping("/{id}")
+	public ResponseEntity<DataResponse<ApplicationDetailResponseDTO>> getApplication(Long applicationId) {
+		return ResponseEntity.ok(
+			DataResponse.from(applicationService.getApplication(applicationId))
 		);
 	}
 }

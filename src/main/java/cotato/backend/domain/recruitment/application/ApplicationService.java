@@ -1,6 +1,8 @@
 package cotato.backend.domain.recruitment.application;
 
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import cotato.backend.api.dto.response.request.SubmitApplicationDTO;
 import cotato.backend.domain.recruitment.dao.ApplicantRepository;
 import cotato.backend.domain.recruitment.dao.ApplicationRepository;
+import cotato.backend.domain.recruitment.dto.response.ApplicationDetailResponseDTO;
 import cotato.backend.domain.recruitment.entity.Applicant;
 import cotato.backend.domain.recruitment.entity.Application;
 import lombok.AccessLevel;
@@ -55,5 +58,19 @@ public class ApplicationService {
 			.build();
 
 		return applicationRepository.save(application).getApplicationId();
+	}
+
+	public ApplicationDetailResponseDTO getApplication(Long applicationId) {
+
+		// applicationId로 찾은 Optional 객체 값이 비어있는 경우 예외 발생, 값이 존재하는 경우 application에 값 저장
+		Application application = applicationRepository.findByApplicationId(applicationId)
+		    .orElseThrow(() -> new NoSuchElementException("Application with ID " + applicationId + " does not exist"));
+
+		Applicant applicant = application.getApplicant();
+
+		return new ApplicationDetailResponseDTO(
+			applicant.getName(), application.getPeriod(), applicant.getAge(), application.getPart(),
+			application.getAbility(), application.getPassion(), applicant.getPhoneNumber(), application.getApplicationTime()
+		);
 	}
 }
