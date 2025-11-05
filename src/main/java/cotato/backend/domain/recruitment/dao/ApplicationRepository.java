@@ -15,4 +15,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 	// LikeService에서 지연 로딩하는 findByApplicationId가 필요하므로 중복된 네이밍 변경하였음
 	@EntityGraph(attributePaths = "applicant")
 	Optional<Application> findWithApplicantByApplicationId(Long applicationId);
+
+	// 지연 로딩, Application만 조회함
+	Optional<Application> findByApplicationId(Long applicationId);
 }
