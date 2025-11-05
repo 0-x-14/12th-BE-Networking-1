@@ -1,4 +1,4 @@
-package cotato.backend.api.dto.response.request;
+package cotato.backend.api.dto.request;
 
 import cotato.backend.domain.recruitment.entity.enums.Part;
 
