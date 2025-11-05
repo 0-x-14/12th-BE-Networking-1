@@ -1,18 +1,25 @@
 package cotato.backend.domain.recruitment.application;
 
+import static cotato.backend.domain.recruitment.entity.enums.FilterBy.*;
+
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import cotato.backend.api.dto.response.request.SubmitApplicationDTO;
+import cotato.backend.api.dto.request.SubmitApplicationDTO;
+import cotato.backend.api.dto.response.ApplicationListDTO;
+import cotato.backend.api.dto.response.ApplicationListResponseDTO;
 import cotato.backend.domain.recruitment.dao.ApplicantRepository;
 import cotato.backend.domain.recruitment.dao.ApplicationRepository;
 import cotato.backend.domain.recruitment.dto.response.ApplicationDetailResponseDTO;
 import cotato.backend.domain.recruitment.entity.Applicant;
 import cotato.backend.domain.recruitment.entity.Application;
+import cotato.backend.domain.recruitment.entity.enums.FilterBy;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
@@ -72,5 +79,51 @@ public class ApplicationService {
 			applicant.getName(), application.getPeriod(), applicant.getAge(), application.getPart(),
 			application.getAbility(), application.getPassion(), applicant.getPhoneNumber(), application.getApplicationTime()
 		);
+	}
+
+	public ApplicationListResponseDTO getApplicationList(FilterBy filterBy, Integer period, Integer page) {
+
+		// 세 가지 필터링 모두 10건씩 조회한다는 요구사항이 동일하므로 pageSize값을 10으로 고정함
+		Integer pageSize = 10;
+
+		// 페이지 객체 생성
+		Pageable pageable = PageRequest.of(page, pageSize);
+
+		Page<ApplicationListDTO> result;
+
+		switch (filterBy) {
+				case period:
+					// 특정 기수를 대상으로 최신순 조회
+					result = applicationRepository
+						.findByPeriodOrderByApplicationTimeDesc(period, pageable);
+
+					return new ApplicationListResponseDTO(
+						filterBy,
+						page + 1,
+						result.getContent()
+					);
+				case likes :
+					// 전체 기수를 대상으로 좋아요순 조회
+					result = applicationRepository
+						.findAllOrderByLikeCountDesc(pageable);
+
+					return new ApplicationListResponseDTO(
+						filterBy,
+						page + 1,
+						result.getContent()
+					);
+				case both :
+					// 특정 기수를 대상으로 좋아요순 조회
+					result = applicationRepository
+						.findByPeriodOrderByLikeCountDesc(period, pageable);
+
+					return new ApplicationListResponseDTO(
+						filterBy,
+						page + 1,
+						result.getContent()
+					);
+				default :
+					throw new IllegalArgumentException("유효하지 않은 필터 기준입니다: " + filterBy);
+		}
 	}
 }
