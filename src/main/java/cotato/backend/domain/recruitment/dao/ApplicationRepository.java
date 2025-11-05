@@ -12,6 +12,7 @@ import cotato.backend.domain.recruitment.entity.Application;
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
 
 	// ApplicationId로 application과 applicant 함께 조회
+	// LikeService에서 지연 로딩하는 findByApplicationId가 필요하므로 중복된 네이밍 변경하였음
 	@EntityGraph(attributePaths = "applicant")
-	Optional<Application> findByApplicationId(Long applicationId);
+	Optional<Application> findWithApplicantByApplicationId(Long applicationId);
 }
